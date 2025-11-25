@@ -38,10 +38,8 @@
                     <label for="jenis_cucian" class="block text-sm font-medium text-gray-700 mb-2">Jenis Cucian</label>
                     <select id="jenis_cucian" name="jenis_cucian" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" required>
                         <option value="">Pilih Jenis</option>
-                        <option value="Cuci Kering" {{ old('jenis_cucian') == 'Cuci Kering' ? 'selected' : '' }}>Cuci Kering</option>
-                        <option value="Cuci Basah" {{ old('jenis_cucian') == 'Cuci Basah' ? 'selected' : '' }}>Cuci Basah</option>
-                        <option value="Setrika" {{ old('jenis_cucian') == 'Setrika' ? 'selected' : '' }}>Setrika</option>
-                        <option value="Cuci Setrika" {{ old('jenis_cucian') == 'Cuci Setrika' ? 'selected' : '' }}>Cuci Setrika</option>
+                        <option value="Reguler" {{ old('jenis_cucian') == 'Reguler' ? 'selected' : '' }}>Reguler</option>
+                        <option value="Express" {{ old('jenis_cucian') == 'Express' ? 'selected' : '' }}>Express</option>
                     </select>
                     @error('jenis_cucian')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
