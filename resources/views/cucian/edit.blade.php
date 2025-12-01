@@ -36,10 +36,8 @@
 
                 <div>
                     <label for="no_pesanan" class="block text-sm font-medium text-gray-700 mb-2">No Pesanan</label>
-                    <input type="text" id="no_pesanan" name="no_pesanan" value="{{ old('no_pesanan', $cucian->no_pesanan) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" required>
-                    @error('no_pesanan')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <input type="text" id="no_pesanan" name="no_pesanan" value="{{ $cucian->no_pesanan }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600" readonly>
+                    <p class="mt-1 text-sm text-gray-500">No Pesanan tidak dapat diubah</p>
                 </div>
 
                 <div>

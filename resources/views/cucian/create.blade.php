@@ -33,24 +33,10 @@
                     @enderror
                 </div>
 
-                <div>
-                    <label for="no_pesanan" class="block text-sm font-medium text-gray-700 mb-2">No Pesanan</label>
-                    <input type="text" id="no_pesanan" name="no_pesanan" value="{{ old('no_pesanan') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" required>
-                    @error('no_pesanan')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="status_cucian" class="block text-sm font-medium text-gray-700 mb-2">Status Cucian</label>
-                    <select id="status_cucian" name="status_cucian" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" required>
-                        <option value="">Pilih Status</option>
-                        <option value="Proses" {{ old('status_cucian') == 'Proses' ? 'selected' : '' }}>Proses</option>
-                        <option value="Selesai" {{ old('status_cucian') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                    </select>
-                    @error('status_cucian')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>Info:</strong> No Pesanan akan digenerate otomatis dan Status Cucian akan diset ke "Proses"
+                    </p>
                 </div>
 
                 <div class="flex justify-end space-x-3 pt-4">

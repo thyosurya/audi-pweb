@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pembayaran;
 use App\Models\Penyimpanan;
 use App\Models\Pesanan;
+use App\Models\LaporanPendapatan;
 use Illuminate\Http\Request;
 
 class PembayaranController extends Controller
@@ -27,12 +28,23 @@ class PembayaranController extends Controller
         $validated = $request->validate([
             'id_penyimpanan' => 'required|exists:penyimpanan,id_penyimpanan',
             'id_pesanan' => 'required|exists:pesanan,id_pesanan',
-            'harga_per_jenis_cucian' => 'required|numeric|min:0',
             'tanggal_pengambilan' => 'nullable|date',
             'metode_pembayaran' => 'required|string|max:20',
         ]);
 
-        Pembayaran::create($validated);
+        // Auto-calculate price based on jenis_cucian and berat
+        $pesanan = Pesanan::findOrFail($validated['id_pesanan']);
+        $hargaPerKg = $pesanan->jenis_cucian === 'Express' ? 10000 : 7000;
+        $validated['harga_per_jenis_cucian'] = $hargaPerKg * $pesanan->berat;
+
+        $pembayaran = Pembayaran::create($validated);
+        
+        // Auto-create laporan pendapatan
+        LaporanPendapatan::create([
+            'id_pembayaran' => $pembayaran->id_pembayaran,
+            'subtotal' => $pembayaran->harga_per_jenis_cucian,
+        ]);
+        
         return redirect()->route('pembayaran.index')->with('success', 'Pembayaran berhasil ditambahkan');
     }
 
@@ -57,12 +69,23 @@ class PembayaranController extends Controller
         $validated = $request->validate([
             'id_penyimpanan' => 'required|exists:penyimpanan,id_penyimpanan',
             'id_pesanan' => 'required|exists:pesanan,id_pesanan',
-            'harga_per_jenis_cucian' => 'required|numeric|min:0',
             'tanggal_pengambilan' => 'nullable|date',
             'metode_pembayaran' => 'required|string|max:20',
         ]);
 
+        // Auto-calculate price based on jenis_cucian and berat
+        $pesanan = Pesanan::findOrFail($validated['id_pesanan']);
+        $hargaPerKg = $pesanan->jenis_cucian === 'Express' ? 10000 : 7000;
+        $validated['harga_per_jenis_cucian'] = $hargaPerKg * $pesanan->berat;
+
         $pembayaran->update($validated);
+        
+        // Update or create laporan pendapatan
+        LaporanPendapatan::updateOrCreate(
+            ['id_pembayaran' => $pembayaran->id_pembayaran],
+            ['subtotal' => $pembayaran->harga_per_jenis_cucian]
+        );
+        
         return redirect()->route('pembayaran.index')->with('success', 'Pembayaran berhasil diupdate');
     }
 

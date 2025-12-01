@@ -70,7 +70,7 @@
         <table class="w-full text-left">
             <thead>
                 <tr class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider">
-                    <th class="px-6 py-4 font-medium">No Resi</th>
+                    <th class="px-6 py-4 font-medium">Id Pelanggan</th>
                     <th class="px-6 py-4 font-medium">Nama Pelanggan</th>
                     <th class="px-6 py-4 font-medium">Berat (Kg)</th>
                     <th class="px-6 py-4 font-medium">Status</th>

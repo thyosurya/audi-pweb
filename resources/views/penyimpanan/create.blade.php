@@ -38,7 +38,15 @@
                     <select id="lokasi_rak" name="lokasi_rak" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" required>
                         <option value="">Pilih Rak</option>
                         @foreach(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'] as $rak)
-                            <option value="Rak {{ $rak }}" {{ old('lokasi_rak') == "Rak $rak" ? 'selected' : '' }}>Rak {{ $rak }}</option>
+                            @php
+                                $rakName = 'Rak ' . $rak;
+                                $isOccupied = in_array($rakName, $occupiedRacks);
+                            @endphp
+                            <option value="{{ $rakName }}" 
+                                {{ old('lokasi_rak') == $rakName ? 'selected' : '' }}
+                                {{ $isOccupied ? 'disabled' : '' }}>
+                                {{ $rakName }} {{ $isOccupied ? '(Terisi)' : '' }}
+                            </option>
                         @endforeach
                     </select>
                     @error('lokasi_rak')

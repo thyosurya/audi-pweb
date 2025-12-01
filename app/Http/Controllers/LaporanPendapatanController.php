@@ -21,6 +21,13 @@ class LaporanPendapatanController extends Controller
             ->orderBy('month')
             ->get();
         
+        // Get daily data for current month (last 30 days)
+        $dailyData = LaporanPendapatan::selectRaw("DATE(created_at) as date, SUM(subtotal) as total")
+            ->where('created_at', '>=', now()->subDays(29)->startOfDay())
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+        
         // Calculate total revenue
         $totalPendapatan = LaporanPendapatan::sum('subtotal');
         $pendapatanBulanIni = LaporanPendapatan::whereMonth('created_at', date('m'))
@@ -28,7 +35,7 @@ class LaporanPendapatanController extends Controller
             ->sum('subtotal');
         $totalTransaksi = LaporanPendapatan::count();
         
-        return view('owner.laporan', compact('laporan', 'monthlyData', 'totalPendapatan', 'pendapatanBulanIni', 'totalTransaksi'));
+        return view('owner.laporan', compact('laporan', 'monthlyData', 'dailyData', 'totalPendapatan', 'pendapatanBulanIni', 'totalTransaksi'));
     }
     
     public function admin()
@@ -63,6 +70,22 @@ class LaporanPendapatanController extends Controller
         
         $pdf = Pdf::loadView('laporan.pdf', compact('laporan', 'totalPendapatan', 'pendapatanBulanIni', 'totalTransaksi'));
         return $pdf->download('laporan-pendapatan-' . date('Y-m-d') . '.pdf');
+    }
+
+    public function exportDailyPdf()
+    {
+        // Get today's data only
+        $laporan = LaporanPendapatan::with('pembayaran.pesanan')
+            ->whereDate('created_at', date('Y-m-d'))
+            ->latest()
+            ->get();
+        
+        $totalPendapatan = $laporan->sum('subtotal');
+        $totalTransaksi = $laporan->count();
+        $tanggal = date('d F Y');
+        
+        $pdf = Pdf::loadView('laporan.daily-pdf', compact('laporan', 'totalPendapatan', 'totalTransaksi', 'tanggal'));
+        return $pdf->download('laporan-harian-' . date('Y-m-d') . '.pdf');
     }
 
     public function create()

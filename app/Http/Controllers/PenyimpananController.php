@@ -17,7 +17,8 @@ class PenyimpananController extends Controller
     public function create()
     {
         $cucian = Cucian::all();
-        return view('penyimpanan.create', compact('cucian'));
+        $occupiedRacks = Penyimpanan::pluck('lokasi_rak')->toArray();
+        return view('penyimpanan.create', compact('cucian', 'occupiedRacks'));
     }
 
     public function store(Request $request)
@@ -25,7 +26,9 @@ class PenyimpananController extends Controller
         $validated = $request->validate([
             'id_cucian' => 'required|exists:cucian,id_cucian',
             'tanggal_simpan' => 'required|date',
-            'lokasi_rak' => 'required|string|max:20',
+            'lokasi_rak' => 'required|string|max:20|unique:penyimpanan,lokasi_rak',
+        ], [
+            'lokasi_rak.unique' => 'Rak ini sudah terisi, silakan pilih rak lain.'
         ]);
 
         Penyimpanan::create($validated);
@@ -42,7 +45,10 @@ class PenyimpananController extends Controller
     {
         $penyimpanan = Penyimpanan::findOrFail($id);
         $cucian = Cucian::all();
-        return view('penyimpanan.edit', compact('penyimpanan', 'cucian'));
+        $occupiedRacks = Penyimpanan::where('id_penyimpanan', '!=', $id)
+            ->pluck('lokasi_rak')
+            ->toArray();
+        return view('penyimpanan.edit', compact('penyimpanan', 'cucian', 'occupiedRacks'));
     }
 
     public function update(Request $request, $id)
@@ -52,7 +58,9 @@ class PenyimpananController extends Controller
         $validated = $request->validate([
             'id_cucian' => 'required|exists:cucian,id_cucian',
             'tanggal_simpan' => 'required|date',
-            'lokasi_rak' => 'required|string|max:20',
+            'lokasi_rak' => 'required|string|max:20|unique:penyimpanan,lokasi_rak,' . $id . ',id_penyimpanan',
+        ], [
+            'lokasi_rak.unique' => 'Rak ini sudah terisi, silakan pilih rak lain.'
         ]);
 
         $penyimpanan->update($validated);

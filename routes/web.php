@@ -44,4 +44,5 @@ Route::middleware('auth')->prefix('owner')->name('owner.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'owner'])->name('dashboard');
     Route::get('/laporan', [LaporanPendapatanController::class, 'index'])->name('laporan');
     Route::get('/laporan/export-pdf', [LaporanPendapatanController::class, 'exportPdf'])->name('laporan.pdf');
+    Route::get('/laporan/export-daily-pdf', [LaporanPendapatanController::class, 'exportDailyPdf'])->name('laporan.daily.pdf');
 });

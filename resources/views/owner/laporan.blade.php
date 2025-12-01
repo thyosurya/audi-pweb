@@ -40,7 +40,10 @@
     <!-- Chart Section -->
     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-semibold text-gray-800">Pendapatan Bulanan {{ date('Y') }}</h3>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800">Pendapatan Bulanan {{ date('Y') }}</h3>
+                <p class="text-sm text-gray-500 mt-1">Grafik pendapatan per bulan tahun ini</p>
+            </div>
             <a href="{{ route('owner.laporan.pdf') }}" class="flex items-center px-4 py-2 bg-white border border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors shadow-sm">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                 Download PDF
@@ -79,6 +82,73 @@
             @foreach($months as $month)
                 <span>{{ $month }}</span>
             @endforeach
+        </div>
+    </div>
+
+    <!-- Daily Chart Section -->
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800">Pendapatan Harian (30 Hari Terakhir)</h3>
+                <p class="text-sm text-gray-500 mt-1">Grafik pendapatan per hari dalam 1 bulan terakhir</p>
+            </div>
+            <a href="{{ route('owner.laporan.daily.pdf') }}" class="flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors shadow-sm">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                Laporan Hari Ini
+            </a>
+        </div>
+        
+        @php
+            $dailyTotals = [];
+            $dailyLabels = [];
+            $maxDailyTotal = 1;
+            
+            // Prepare last 30 days data
+            for($i = 29; $i >= 0; $i--) {
+                $date = now()->subDays($i)->format('Y-m-d');
+                $dailyTotals[$date] = 0;
+                $dailyLabels[] = now()->subDays($i)->format('d');
+            }
+            
+            // Fill actual data
+            foreach($dailyData as $data) {
+                $dailyTotals[$data->date] = $data->total;
+                if($data->total > $maxDailyTotal) {
+                    $maxDailyTotal = $data->total;
+                }
+            }
+        @endphp
+        
+        <div class="w-full h-64 bg-gray-50 rounded-lg flex items-end justify-between px-2 pb-4 gap-1 overflow-x-auto">
+            @foreach($dailyTotals as $date => $total)
+                @php
+                    $height = $maxDailyTotal > 0 ? ($total / $maxDailyTotal) * 100 : 0;
+                    $isToday = $date === now()->format('Y-m-d');
+                @endphp
+                <div class="flex-shrink-0 {{ $isToday ? 'bg-pink-500 hover:bg-pink-600' : 'bg-purple-400 hover:bg-purple-500' }} rounded-t transition-colors relative group" style="width: 20px; height: {{ max($height, 5) }}%">
+                    <div class="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-2 px-3 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        <div class="font-semibold">{{ \Carbon\Carbon::parse($date)->format('d M Y') }}</div>
+                        <div class="text-center mt-1">Rp {{ number_format($total, 0, ',', '.') }}</div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        <div class="flex justify-between mt-4 text-xs text-gray-500 px-2">
+            @foreach($dailyLabels as $index => $label)
+                @if($index % 3 === 0)
+                    <span>{{ $label }}</span>
+                @endif
+            @endforeach
+        </div>
+        <div class="mt-4 flex items-center justify-center space-x-4 text-sm">
+            <div class="flex items-center">
+                <div class="w-3 h-3 bg-purple-400 rounded mr-2"></div>
+                <span class="text-gray-600">Hari Biasa</span>
+            </div>
+            <div class="flex items-center">
+                <div class="w-3 h-3 bg-pink-500 rounded mr-2"></div>
+                <span class="text-gray-600">Hari Ini</span>
+            </div>
         </div>
     </div>
 

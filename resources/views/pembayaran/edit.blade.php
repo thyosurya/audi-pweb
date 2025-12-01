@@ -24,8 +24,11 @@
                     <select id="id_pesanan" name="id_pesanan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" required>
                         <option value="">Pilih Pesanan</option>
                         @foreach($pesanan as $p)
-                            <option value="{{ $p->id_pesanan }}" {{ old('id_pesanan', $pembayaran->id_pesanan) == $p->id_pesanan ? 'selected' : '' }}>
-                                #ORD-{{ str_pad($p->id_pesanan, 3, '0', STR_PAD_LEFT) }} - {{ $p->nama_pelanggan }}
+                            <option value="{{ $p->id_pesanan }}" 
+                                data-jenis="{{ $p->jenis_cucian }}" 
+                                data-berat="{{ $p->berat }}"
+                                {{ old('id_pesanan', $pembayaran->id_pesanan) == $p->id_pesanan ? 'selected' : '' }}>
+                                #ORD-{{ str_pad($p->id_pesanan, 3, '0', STR_PAD_LEFT) }} - {{ $p->nama_pelanggan }} ({{ $p->jenis_cucian }} - {{ $p->berat }}kg)
                             </option>
                         @endforeach
                     </select>
@@ -50,11 +53,11 @@
                 </div>
 
                 <div>
-                    <label for="harga_per_jenis_cucian" class="block text-sm font-medium text-gray-700 mb-2">Harga</label>
-                    <input type="number" step="0.01" id="harga_per_jenis_cucian" name="harga_per_jenis_cucian" value="{{ old('harga_per_jenis_cucian', $pembayaran->harga_per_jenis_cucian) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" required>
-                    @error('harga_per_jenis_cucian')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <label for="harga_display" class="block text-sm font-medium text-gray-700 mb-2">Total Harga</label>
+                    <div class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-800 font-semibold text-lg" id="harga_display">
+                        Rp {{ number_format($pembayaran->harga_per_jenis_cucian, 0, ',', '.') }}
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500">Harga dihitung otomatis: Express Rp 10.000/kg | Reguler Rp 7.000/kg</p>
                 </div>
 
                 <div>
@@ -90,4 +93,20 @@
         </form>
     </div>
 </div>
+
+<script>
+document.getElementById('id_pesanan').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const jenis = selectedOption.getAttribute('data-jenis');
+    const berat = parseFloat(selectedOption.getAttribute('data-berat'));
+    
+    if (jenis && berat) {
+        const hargaPerKg = jenis === 'Express' ? 10000 : 7000;
+        const totalHarga = hargaPerKg * berat;
+        document.getElementById('harga_display').textContent = 'Rp ' + totalHarga.toLocaleString('id-ID');
+    } else {
+        document.getElementById('harga_display').textContent = 'Rp 0';
+    }
+});
+</script>
 @endsection
