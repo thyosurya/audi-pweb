@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('laporan_pendapatan', function (Blueprint $table) {
-            $table->integer('id_laporan', false, true)->length(11)->primary();
-            $table->integer('id_pembayaran', false, true)->length(11);
+            $table->unsignedBigInteger('id_laporan')->autoIncrement()->primary();
+            $table->unsignedBigInteger('id_pembayaran');
             $table->decimal('subtotal', 10, 2);
             $table->timestamps();
 

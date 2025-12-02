@@ -14,8 +14,8 @@ class LaporanPendapatanController extends Controller
     {
         $laporan = LaporanPendapatan::with('pembayaran.pesanan')->latest()->get();
         
-        // Get monthly data for chart (SQLite compatible)
-        $monthlyData = LaporanPendapatan::selectRaw("CAST(strftime('%m', created_at) AS INTEGER) as month, CAST(strftime('%Y', created_at) AS INTEGER) as year, SUM(subtotal) as total")
+        // Get monthly data for chart (MySQL compatible)
+        $monthlyData = LaporanPendapatan::selectRaw("MONTH(created_at) as month, YEAR(created_at) as year, SUM(subtotal) as total")
             ->whereYear('created_at', date('Y'))
             ->groupBy('year', 'month')
             ->orderBy('month')
@@ -42,8 +42,8 @@ class LaporanPendapatanController extends Controller
     {
         $laporan = LaporanPendapatan::with('pembayaran.pesanan')->latest()->get();
         
-        // Get monthly data for chart (SQLite compatible)
-        $monthlyData = LaporanPendapatan::selectRaw("CAST(strftime('%m', created_at) AS INTEGER) as month, CAST(strftime('%Y', created_at) AS INTEGER) as year, SUM(subtotal) as total")
+        // Get monthly data for chart (MySQL compatible)
+        $monthlyData = LaporanPendapatan::selectRaw("MONTH(created_at) as month, YEAR(created_at) as year, SUM(subtotal) as total")
             ->whereYear('created_at', date('Y'))
             ->groupBy('year', 'month')
             ->orderBy('month')

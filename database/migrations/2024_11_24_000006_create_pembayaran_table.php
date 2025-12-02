@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pembayaran', function (Blueprint $table) {
-            $table->integer('id_pembayaran', false, true)->length(11)->primary();
-            $table->integer('id_penyimpanan', false, true)->length(11);
-            $table->integer('id_pesanan', false, true)->length(11);
+            $table->unsignedBigInteger('id_pembayaran')->autoIncrement()->primary();
+            $table->unsignedBigInteger('id_penyimpanan');
+            $table->unsignedBigInteger('id_pesanan');
             $table->decimal('harga_per_jenis_cucian', 10, 2);
             $table->date('tanggal_pengambilan')->nullable();
             $table->string('metode_pembayaran', 20);
